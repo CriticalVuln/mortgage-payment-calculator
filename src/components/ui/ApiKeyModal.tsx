@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { XCircle, Key, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
+import { XCircle, Key, CheckCircle, AlertCircle, Trash2, Eye, EyeOff } from 'lucide-react';
 import Button from './Button';
 import { getApiKey, saveApiKey, hasApiKey, clearApiKey } from '../../services/apiConfig';
 import { validateApiKey, sanitizeString } from '../../utils/validation';
@@ -13,6 +13,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
   const [apiKey, setApiKey] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [error, setError] = useState<string>('');
+  const [showPassword, setShowPassword] = useState(false);
   
   useEffect(() => {
     if (isOpen) {
@@ -101,19 +102,32 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
               api-ninjas.com
             </a>.
           </p>
-          
-          <div className="space-y-2">
+            <div className="space-y-2">
             <label className="block text-sm font-medium text-neutral-700">
               API Ninjas API Key
-            </label>            <input
-              type="password"
-              value={apiKey}
-              onChange={handleApiKeyChange}
-              placeholder="Enter your API key"
-              className={`w-full px-3 py-2 rounded-md border ${error ? 'border-error-300' : 'border-neutral-300'} focus:outline-none focus:ring-2 ${error ? 'focus:ring-error-500' : 'focus:ring-primary-500'} focus:border-transparent transition-all`}
-              autoComplete="off"
-              spellCheck="false"
-            />
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={apiKey}
+                onChange={handleApiKeyChange}
+                placeholder="Enter your API key"
+                className={`w-full px-3 py-2 pr-10 rounded-md border ${error ? 'border-error-300' : 'border-neutral-300'} focus:outline-none focus:ring-2 ${error ? 'focus:ring-error-500' : 'focus:ring-primary-500'} focus:border-transparent transition-all`}
+                autoComplete="off"
+                spellCheck="false"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             {isSaved && (
               <div className="flex items-center text-emerald-600 text-sm mt-1">
                 <CheckCircle className="h-4 w-4 mr-1" />
