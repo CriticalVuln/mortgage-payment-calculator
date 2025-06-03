@@ -12,8 +12,7 @@ interface ApiKeyModalProps {
 export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => {
   const [apiKey, setApiKey] = useState('');
   const [isSaved, setIsSaved] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string>('');  const [showPassword, setShowPassword] = useState(false);
   
   useEffect(() => {
     if (isOpen) {
