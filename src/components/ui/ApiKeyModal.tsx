@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { XCircle, Key, CheckCircle, AlertCircle, Trash2, Eye, EyeOff } from 'lucide-react';
 import Button from './Button';
 import { getApiKey, saveApiKey, hasApiKey, clearApiKey } from '../../services/apiConfig';
-import { validateApiKey, sanitizeString } from '../../utils/validation';
+import { validateApiKey } from '../../utils/validation';
 
 interface ApiKeyModalProps {
   isOpen: boolean;
@@ -23,9 +23,10 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
       setError(''); // Clear any previous errors
     }
   }, [isOpen]);
-  
-  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = sanitizeString(e.target.value);
+    const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // For API keys, we only need basic sanitization (trim and length limit)
+    // Don't use sanitizeString as it removes valid API key characters like + and =
+    const value = e.target.value.trim().substring(0, 200); // Reasonable API key length limit
     setApiKey(value);
     setIsSaved(false);
     
@@ -46,8 +47,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
       setError('');
     }, 2000);
   };
-  
-  const handleSave = () => {
+    const handleSave = () => {
     // Validate API key format
     if (!apiKey.trim()) {
       setError('API key cannot be empty');
@@ -55,7 +55,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
     }
     
     if (!validateApiKey(apiKey)) {
-      setError('Invalid API key format. Keys should be alphanumeric and at least 10 characters.');
+      setError('Invalid API key format. Keys should be at least 10 characters long.');
       return;
     }
     

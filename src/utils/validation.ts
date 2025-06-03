@@ -73,11 +73,13 @@ export const validateAddress = (address: string): string => {
 
 // Validate API key format (basic check)
 export const validateApiKey = (key: string): boolean => {
-  const sanitized = sanitizeString(key);
+  const trimmedKey = key.trim();
   
-  // API keys should be alphanumeric and at least 10 characters
-  const apiKeyPattern = /^[a-zA-Z0-9_-]{10,}$/;
-  return apiKeyPattern.test(sanitized);
+  // API keys should be at least 10 characters and can contain:
+  // - Alphanumeric characters (a-z, A-Z, 0-9)
+  // - Common special characters used in API keys (+, =, -, _, /, .)
+  const apiKeyPattern = /^[a-zA-Z0-9+/=_.-]{10,}$/;
+  return apiKeyPattern.test(trimmedKey) && trimmedKey.length >= 10;
 };
 
 // Rate limiting helper
