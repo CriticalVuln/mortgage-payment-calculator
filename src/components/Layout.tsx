@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex items-center">
               <Home className="h-8 w-8 text-primary-600" />
               <h1 className="ml-2 text-xl font-bold text-neutral-900">
-                Mortgage<span className="text-primary-600">Vision</span>
+                My Mortgage <span className="text-primary-600">Calc</span>
               </h1>
             </div>
             
