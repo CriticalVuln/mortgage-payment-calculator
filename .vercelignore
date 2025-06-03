@@ -1,0 +1,2 @@
+# This file helps Vercel identify this as a Vite project
+framework = "vite"
