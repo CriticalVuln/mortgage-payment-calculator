@@ -102,12 +102,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex justify-center md:justify-start">
               <Home className="h-6 w-6 text-primary-600" />
               <span className="ml-2 text-base font-medium text-neutral-900">
-                MortgageVision
+                My Mortgage Calc
               </span>
             </div>
             <div className="mt-4 md:mt-0">
               <p className="text-center md:text-right text-sm text-neutral-500">
-                &copy; {new Date().getFullYear()} MortgageVision. All rights reserved.
+                &copy; {new Date().getFullYear()} My Mortgage Calc. All rights reserved.
               </p>
               <p className="text-center md:text-right text-xs text-neutral-400 mt-1">
                 This calculator provides estimates only. Consult with a mortgage professional for accurate rates.
