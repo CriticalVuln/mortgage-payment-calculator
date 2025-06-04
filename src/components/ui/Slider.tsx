@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './SliderStyles.css';
 
 interface SliderProps {
   min: number;
@@ -62,53 +63,13 @@ const Slider: React.FC<SliderProps> = ({
           step={step}
           value={localValue}
           onChange={handleChange}
-          className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer"
+          className="custom-range-slider w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer"
           style={{
             background: `linear-gradient(to right, #1f5cf7 0%, #1f5cf7 ${percentage}%, #e2e8f0 ${percentage}%, #e2e8f0 100%)`
           }}
         />
         
-        {/* Custom thumb */}
-        <style jsx>{`
-          input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-          }
-          
-          input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #1f5cf7;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.15s ease;
-          }
-          
-          input[type="range"]::-webkit-slider-thumb:hover {
-            background: #1f5cf7;
-            transform: scale(1.1);
-          }
-          
-          input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #1f5cf7;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.15s ease;
-          }
-          
-          input[type="range"]::-moz-range-thumb:hover {
-            background: #1f5cf7;
-            transform: scale(1.1);
-          }
-        `}</style>
+        {/* Custom thumb styles are moved to a className */}
       </div>
       
       {!label && (

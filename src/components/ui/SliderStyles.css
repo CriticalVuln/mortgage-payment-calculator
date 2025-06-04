@@ -1,0 +1,39 @@
+/* Custom slider styles */
+.custom-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.custom-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #1f5cf7;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.15s ease;
+}
+
+.custom-range-slider::-webkit-slider-thumb:hover {
+  background: #1f5cf7;
+  transform: scale(1.1);
+}
+
+.custom-range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #1f5cf7;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.15s ease;
+}
+
+.custom-range-slider::-moz-range-thumb:hover {
+  background: #1f5cf7;
+  transform: scale(1.1);
+}

@@ -2,12 +2,35 @@ import React, { ReactNode } from 'react';
 import { Home, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+type AppView = 'calculator' | 'rates' | 'learning' | 'article';
+
 interface LayoutProps {
   children: ReactNode;
+  currentView: AppView;
+  onViewChange: (view: AppView) => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, currentView, onViewChange }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  const handleNavClick = (view: AppView) => {
+    onViewChange(view);
+    setIsMobileMenuOpen(false);
+  };
+
+  const getNavItemClass = (view: AppView) => {
+    const isActive = currentView === view || (currentView === 'article' && view === 'learning');
+    return isActive 
+      ? "text-neutral-900 hover:text-primary-600 px-3 py-2 text-sm font-medium bg-primary-50 rounded-md"
+      : "text-neutral-500 hover:text-primary-600 px-3 py-2 text-sm font-medium";
+  };
+
+  const getMobileNavItemClass = (view: AppView) => {
+    const isActive = currentView === view || (currentView === 'article' && view === 'learning');
+    return isActive
+      ? "block px-3 py-2 rounded-md text-base font-medium text-neutral-900 bg-neutral-50"
+      : "block px-3 py-2 rounded-md text-base font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50";
+  };
   
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -24,15 +47,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             
             {/* Desktop navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-neutral-900 hover:text-primary-600 px-3 py-2 text-sm font-medium">
+              <button
+                onClick={() => handleNavClick('calculator')}
+                className={getNavItemClass('calculator')}
+              >
                 Calculator
-              </a>
-              <a href="#" className="text-neutral-500 hover:text-primary-600 px-3 py-2 text-sm font-medium">
+              </button>
+              <button
+                onClick={() => handleNavClick('rates')}
+                className={getNavItemClass('rates')}
+              >
                 Rates
-              </a>
-              <a href="#" className="text-neutral-500 hover:text-primary-600 px-3 py-2 text-sm font-medium">
+              </button>
+              <button
+                onClick={() => handleNavClick('learning')}
+                className={getNavItemClass('learning')}
+              >
                 Learning Center
-              </a>
+              </button>
             </nav>
             
             {/* Mobile menu button */}
@@ -63,27 +95,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               transition={{ duration: 0.2 }}
             >
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a 
-                  href="#" 
-                  className="block px-3 py-2 rounded-md text-base font-medium text-neutral-900 bg-neutral-50"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                <button
+                  onClick={() => handleNavClick('calculator')}
+                  className={getMobileNavItemClass('calculator')}
                 >
                   Calculator
-                </a>
-                <a 
-                  href="#" 
-                  className="block px-3 py-2 rounded-md text-base font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => handleNavClick('rates')}
+                  className={getMobileNavItemClass('rates')}
                 >
                   Rates
-                </a>
-                <a 
-                  href="#" 
-                  className="block px-3 py-2 rounded-md text-base font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => handleNavClick('learning')}
+                  className={getMobileNavItemClass('learning')}
                 >
                   Learning Center
-                </a>
+                </button>
               </div>
             </motion.div>
           )}

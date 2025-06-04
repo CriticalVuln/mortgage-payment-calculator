@@ -100,9 +100,14 @@ const LocationSearch: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Debug logging
+    console.log('Validating address:', address);
+    console.log('isValidAddress result:', isValidAddress(address));
+    
     // Validate address format before proceeding
     if (!isValidAddress(address)) {
-      setAddressError('Invalid address format. Please enter a valid address.');
+      console.log('Address validation failed for:', address);
+      setAddressError('Invalid address format. Please enter a valid ZIP code, city, state, or address.');
       return;
     } else {
       setAddressError('');
@@ -172,7 +177,7 @@ const LocationSearch: React.FC = () => {
             <div className="space-y-1">
               <Input
                 label="Address or Location"
-                placeholder="Enter an address, city, ZIP code, or landmark"
+                placeholder="Enter ZIP code (48034), city (Detroit), state (MI), or full address"
                 value={address}
                 onChange={handleAddressChange}
                 icon={<MapPin className="h-5 w-5 text-neutral-400" />}

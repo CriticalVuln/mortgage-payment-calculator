@@ -56,12 +56,17 @@ export const validateZipCode = (zip: string): boolean => {
   return zipPattern.test(zip.trim());
 };
 
-// Validate address input - flexible for ZIP codes, cities, and full addresses
+// Validate address input - comprehensive validation for all location formats
 export const validateAddress = (address: string): string => {
   const trimmed = address.trim();
   
-  // Too short to be valid
-  if (trimmed.length < 3) {
+  // Must have some content
+  if (trimmed.length === 0) {
+    return '';
+  }
+  
+  // Very short inputs (1-2 chars) are generally invalid
+  if (trimmed.length < 2) {
     return '';
   }
   
@@ -70,17 +75,35 @@ export const validateAddress = (address: string): string => {
     return trimmed;
   }
   
-  // Check if it's a city name (letters, spaces, commas, periods)
-  const cityPattern = /^[a-zA-Z\s,.-]+$/;
-  if (cityPattern.test(trimmed) && trimmed.length >= 3) {
+  // Check if it's a state abbreviation (2 uppercase letters)
+  const statePattern = /^[A-Z]{2}$/;
+  if (statePattern.test(trimmed)) {
     return trimmed;
   }
   
-  // Check if it's a full address (must contain at least one number and one letter)
+  // Check if it's a city name (letters, spaces, commas, periods, apostrophes, hyphens)
+  // Allow names like "St. Louis", "O'Fallon", "Winston-Salem"
+  const cityPattern = /^[a-zA-Z\s,.''-]+$/;
+  if (cityPattern.test(trimmed) && trimmed.length >= 2) {
+    return trimmed;
+  }
+  
+  // Check if it's a full address (contains both numbers and letters)
   const hasNumber = /\d/.test(trimmed);
   const hasLetter = /[a-zA-Z]/.test(trimmed);
   
-  if (hasNumber && hasLetter && trimmed.length >= 5) {
+  if (hasNumber && hasLetter && trimmed.length >= 3) {
+    return trimmed;
+  }
+  
+  // If it contains only numbers but is longer than 5 digits, might be extended ZIP
+  if (/^\d{6,}$/.test(trimmed)) {
+    return trimmed;
+  }
+    // Allow any input that has reasonable characters for addresses
+  // This is a fallback for edge cases
+  const addressPattern = /^[a-zA-Z0-9\s,.'"#&()\/\-]+$/;
+  if (addressPattern.test(trimmed) && trimmed.length >= 2) {
     return trimmed;
   }
   
