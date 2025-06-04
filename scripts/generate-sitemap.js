@@ -47,27 +47,90 @@ const staticPages = [
 async function fetchArticles() {
   try {
     if (!supabase) {
-      console.log('Supabase not available, using fallback articles');
-      // Return some sample articles for demonstration
+      console.log('Supabase not available, using comprehensive fallback articles');
+      // Return all 12 articles for comprehensive SEO coverage
       return [
         {
           id: '1',
           slug: 'understanding-mortgage-basics',
-          title: 'Understanding Mortgage Basics',
+          title: 'Understanding Mortgage Basics: A Complete Guide',
           updated_at: '2025-06-04T00:00:00Z',
           created_at: '2025-06-01T00:00:00Z'
         },
         {
           id: '2',
           slug: 'first-time-homebuyer-guide',
-          title: 'First Time Homebuyer Guide',
+          title: 'First Time Homebuyer Guide: Everything You Need to Know',
           updated_at: '2025-06-04T00:00:00Z',
           created_at: '2025-06-02T00:00:00Z'
         },
         {
           id: '3',
           slug: 'mortgage-rate-comparison',
-          title: 'Mortgage Rate Comparison',
+          title: 'Mortgage Rate Comparison: Finding the Best Deal',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-03T00:00:00Z'
+        },
+        {
+          id: '4',
+          slug: 'down-payment-strategies',
+          title: 'Down Payment Strategies: Save More, Pay Less',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-01T00:00:00Z'
+        },
+        {
+          id: '5',
+          slug: 'refinancing-guide',
+          title: 'Refinancing Your Mortgage: When and How to Do It',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-02T00:00:00Z'
+        },
+        {
+          id: '6',
+          slug: 'mortgage-insurance-explained',
+          title: 'Mortgage Insurance Explained: PMI vs MIP',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-03T00:00:00Z'
+        },
+        {
+          id: '7',
+          slug: 'fixed-vs-adjustable-rate-mortgages',
+          title: 'Fixed vs Adjustable Rate Mortgages: Which is Right for You?',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-01T00:00:00Z'
+        },
+        {
+          id: '8',
+          slug: 'home-buying-process-timeline',
+          title: 'Home Buying Process Timeline: Step by Step Guide',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-02T00:00:00Z'
+        },
+        {
+          id: '9',
+          slug: 'credit-score-mortgage-approval',
+          title: 'How Your Credit Score Affects Mortgage Approval',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-03T00:00:00Z'
+        },
+        {
+          id: '10',
+          slug: 'closing-costs-breakdown',
+          title: 'Closing Costs Breakdown: What to Expect',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-01T00:00:00Z'
+        },
+        {
+          id: '11',
+          slug: 'homeowners-insurance-guide',
+          title: 'Homeowners Insurance Guide: Protecting Your Investment',
+          updated_at: '2025-06-04T00:00:00Z',
+          created_at: '2025-06-02T00:00:00Z'
+        },
+        {
+          id: '12',
+          slug: 'property-taxes-explained',
+          title: 'Property Taxes Explained: What Homeowners Need to Know',
           updated_at: '2025-06-04T00:00:00Z',
           created_at: '2025-06-03T00:00:00Z'
         }
