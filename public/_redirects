@@ -1,1 +1,7 @@
+# Handle client-side routing
 /*    /index.html   200
+
+# Legacy hash route redirects to clean URLs  
+/#rates /rates 301!
+/#learning /learning 301!
+/#article/* /article/:splat 301!

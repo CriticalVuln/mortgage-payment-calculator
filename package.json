@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && npx vite build",
+    "build": "tsc --noEmit && npx vite build && npm run sitemap",
     "build:node": "node build.js",
     "vercel-build": "npm run build",
+    "sitemap": "node scripts/generate-sitemap.js",
+    "sitemap:dev": "npm run sitemap && echo 'Sitemap generated for development'",
     "lint": "eslint .",
     "preview": "vite preview"
   },

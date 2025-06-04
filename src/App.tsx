@@ -10,56 +10,44 @@ import RateComparison from './components/mortgage/RateComparison';
 import ExtraPaymentCalculator from './components/mortgage/ExtraPaymentCalculator';
 import LearningCenter from './components/learning/LearningCenter';
 import ArticleDetail from './components/learning/ArticleDetail';
-
-type AppView = 'calculator' | 'rates' | 'learning' | 'article';
+import { router, AppView, RouteState } from './utils/router';
 
 function App() {
-  const [currentView, setCurrentView] = useState<AppView>('calculator');
-  const [currentArticleId, setCurrentArticleId] = useState<string | null>(null);
+  const [routeState, setRouteState] = useState<RouteState>(() => router.getCurrentState());
 
-  // Simple URL-based routing
+  // Subscribe to route changes
   useEffect(() => {
-    const updateViewFromURL = () => {
-      const hash = window.location.hash.slice(1); // Remove #
-      if (hash.startsWith('article/')) {
-        const articleId = hash.replace('article/', '');
-        setCurrentView('article');
-        setCurrentArticleId(articleId);
-      } else if (hash === 'rates') {
-        setCurrentView('rates');
-        setCurrentArticleId(null);
-      } else if (hash === 'learning') {
-        setCurrentView('learning');
-        setCurrentArticleId(null);
-      } else {
-        setCurrentView('calculator');
-        setCurrentArticleId(null);
+    const unsubscribe = router.subscribe(setRouteState);
+    return unsubscribe;
+  }, []);
+
+  // Legacy hash routing support (redirect to clean URLs)
+  useEffect(() => {
+    const handleLegacyRouting = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        if (hash.startsWith('article/')) {
+          const articleId = hash.replace('article/', '');
+          router.replace('article', articleId);
+        } else if (hash === 'rates') {
+          router.replace('rates');
+        } else if (hash === 'learning') {
+          router.replace('learning');
+        }
+        // Clear the hash
+        window.history.replaceState({}, '', window.location.pathname);
       }
     };
 
-    // Listen for hash changes
-    window.addEventListener('hashchange', updateViewFromURL);
-    updateViewFromURL(); // Initial load
-
-    return () => window.removeEventListener('hashchange', updateViewFromURL);
+    handleLegacyRouting();
   }, []);
 
   const handleViewChange = (view: AppView) => {
-    setCurrentView(view);
-    setCurrentArticleId(null);
-    
-    // Update URL hash
-    if (view === 'calculator') {
-      window.location.hash = '';
-    } else {
-      window.location.hash = view;
-    }
+    router.navigate(view);
   };
 
-  const handleArticleView = (articleId: string) => {
-    setCurrentView('article');
-    setCurrentArticleId(articleId);
-    window.location.hash = `article/${articleId}`;
+  const handleArticleView = (articleSlug: string) => {
+    router.navigate('article', articleSlug);
   };
 
   const renderCalculatorView = () => (
@@ -116,9 +104,9 @@ function App() {
 
   const renderArticleView = () => (
     <LearningCenterProvider>
-      {currentArticleId && (
+      {routeState.articleSlug && (
         <ArticleDetail 
-          articleId={currentArticleId} 
+          articleId={routeState.articleSlug} 
           onBack={() => handleViewChange('learning')}
           onArticleClick={handleArticleView}
         />
@@ -127,11 +115,11 @@ function App() {
   );
 
   return (
-    <Layout currentView={currentView} onViewChange={handleViewChange}>
-      {currentView === 'calculator' && renderCalculatorView()}
-      {currentView === 'rates' && renderRatesView()}
-      {currentView === 'learning' && renderLearningView()}
-      {currentView === 'article' && renderArticleView()}
+    <Layout currentView={routeState.view} onViewChange={handleViewChange}>
+      {routeState.view === 'calculator' && renderCalculatorView()}
+      {routeState.view === 'rates' && renderRatesView()}
+      {routeState.view === 'learning' && renderLearningView()}
+      {routeState.view === 'article' && renderArticleView()}
     </Layout>
   );
 }

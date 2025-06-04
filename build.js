@@ -22,6 +22,15 @@ try {
   console.log('Building with Vite...');
   execSync('npx vite build', { stdio: 'inherit' });
   
+  // Generate sitemap and robots.txt
+  console.log('Generating sitemap and robots.txt...');
+  try {
+    execSync('node scripts/generate-sitemap.js', { stdio: 'inherit' });
+  } catch (sitemapError) {
+    console.warn('Warning: Sitemap generation failed:', sitemapError.message);
+    // Don't fail the build if sitemap generation fails
+  }
+  
   // Verify build output
   if (fs.existsSync('dist')) {
     console.log('Build completed successfully!');
