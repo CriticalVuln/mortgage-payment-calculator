@@ -1,9 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage / Mortgage Calculator -->
   <url>
-    <loc>https://mortgage-payment-calculator-beta.vercel.app/</loc>
-    <lastmod>2025-06-03</lastmod>
+    <loc>https://mymortgagecalc.co/</loc>
+    <lastmod>2025-06-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  
+  <!-- Rates Page -->
+  <url>
+    <loc>https://mymortgagecalc.co/#rates</loc>
+    <lastmod>2025-06-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Learning Center -->
+  <url>
+    <loc>https://mymortgagecalc.co/#learning</loc>
+    <lastmod>2025-06-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Sample Article Pages (these will be dynamically generated as you add articles) -->
+  <url>
+    <loc>https://mymortgagecalc.co/#article/understanding-mortgage-basics</loc>
+    <lastmod>2025-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://mymortgagecalc.co/#article/first-time-homebuyer-guide</loc>
+    <lastmod>2025-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://mymortgagecalc.co/#article/mortgage-rate-comparison</loc>
+    <lastmod>2025-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://mymortgagecalc.co/#article/down-payment-strategies</loc>
+    <lastmod>2025-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://mymortgagecalc.co/#article/refinancing-guide</loc>
+    <lastmod>2025-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
