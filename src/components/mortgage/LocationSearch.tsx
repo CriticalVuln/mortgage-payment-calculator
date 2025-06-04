@@ -9,7 +9,7 @@ import ApiKeyModal from '../ui/ApiKeyModal';
 import { useMortgage } from '../../context/MortgageContext';
 import { getPropertyTaxRate } from '../../services/propertyTaxService';
 import { hasApiKey } from '../../services/apiConfig';
-import { validateAddress, validateZipCode } from '../../utils/validation';
+import { validateZipCode, isValidAddress } from '../../utils/validation';
 
 const LocationSearch: React.FC = () => {
   const { state, updateLocation, updatePropertyDetails, recalculatePayment } = useMortgage();
@@ -101,7 +101,7 @@ const LocationSearch: React.FC = () => {
     e.preventDefault();
     
     // Validate address format before proceeding
-    if (!validateAddress(address)) {
+    if (!isValidAddress(address)) {
       setAddressError('Invalid address format. Please enter a valid address.');
       return;
     } else {

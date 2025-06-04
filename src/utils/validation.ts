@@ -56,19 +56,41 @@ export const validateZipCode = (zip: string): boolean => {
   return zipPattern.test(zip.trim());
 };
 
-// Validate address input
+// Validate address input - flexible for ZIP codes, cities, and full addresses
 export const validateAddress = (address: string): string => {
-  const sanitized = sanitizeString(address);
+  const trimmed = address.trim();
   
-  // Basic address validation - must contain at least one number and one letter
-  const hasNumber = /\d/.test(sanitized);
-  const hasLetter = /[a-zA-Z]/.test(sanitized);
-  
-  if (!hasNumber || !hasLetter || sanitized.length < 5) {
+  // Too short to be valid
+  if (trimmed.length < 3) {
     return '';
   }
   
-  return sanitized;
+  // Check if it's a valid ZIP code (5 digits, optionally with dash and 4 more digits)
+  if (validateZipCode(trimmed)) {
+    return trimmed;
+  }
+  
+  // Check if it's a city name (letters, spaces, commas, periods)
+  const cityPattern = /^[a-zA-Z\s,.-]+$/;
+  if (cityPattern.test(trimmed) && trimmed.length >= 3) {
+    return trimmed;
+  }
+  
+  // Check if it's a full address (must contain at least one number and one letter)
+  const hasNumber = /\d/.test(trimmed);
+  const hasLetter = /[a-zA-Z]/.test(trimmed);
+  
+  if (hasNumber && hasLetter && trimmed.length >= 5) {
+    return trimmed;
+  }
+  
+  // If none of the patterns match, return empty string
+  return '';
+};
+
+// Boolean version for validation checks
+export const isValidAddress = (address: string): boolean => {
+  return validateAddress(address) !== '';
 };
 
 // Validate API key format (basic check)
