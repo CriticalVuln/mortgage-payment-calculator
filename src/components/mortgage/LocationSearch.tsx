@@ -10,6 +10,7 @@ import { useMortgage } from '../../context/MortgageContext';
 import { getPropertyTaxRate } from '../../services/propertyTaxService';
 import { hasApiKey } from '../../services/apiConfig';
 import { validateZipCode, isValidAddress } from '../../utils/validation';
+import { getStateFromZipCode } from '../../services/locationUtilitiesService';
 
 const LocationSearch: React.FC = () => {
   const { state, updateLocation, updatePropertyDetails, recalculatePayment } = useMortgage();
@@ -114,15 +115,34 @@ const LocationSearch: React.FC = () => {
     }
     
     setIsLoading(true);
-    
-    try {
+      try {
       // Fetch property tax rate for the location
       const taxRateResult = await getPropertyTaxRate(address);
       setTaxRate(taxRateResult.taxRate);
-      setLastCheckedZip(extractZipCode(address));
+      const zipCode = extractZipCode(address);
+      setLastCheckedZip(zipCode);
+      
+      // Get state from ZIP code for better utilities calculation
+      let stateValue = taxRateResult.state;      // If we found a ZIP code, try to get its state from our mapping
+      if (zipCode) {
+        console.log(`[LocationSearch] Found ZIP code: ${zipCode}, determining state...`);
+        const stateFromZip = getStateFromZipCode(zipCode);
+        
+        if (stateFromZip) {
+          console.log(`[LocationSearch] Detected state ${stateFromZip} from ZIP code ${zipCode}`);
+          stateValue = stateFromZip;
+        }
+      }
+      
+      console.log(`[LocationSearch] Updating location with address: "${address}", state: "${stateValue}"`);
       
       // Update location in state with the state information
-      updateLocation({ address, radius, state: taxRateResult.state });
+      updateLocation({ 
+        address, 
+        radius, 
+        state: stateValue,
+        zipCode: zipCode || undefined 
+      });
       
       // Update the property tax calculation in the mortgage calculator
       // We do this by updating a custom tax rate in the property details

@@ -3,6 +3,8 @@
  * Includes electricity, water, gas, trash, internet, etc.
  */
 
+import { getLocationUtilitiesCost } from './locationUtilitiesService';
+
 // Average monthly utility costs by state (as of June 2025)
 // Data in USD per month for an average household
 const utilityCostsByState: Record<string, number> = {
@@ -105,4 +107,34 @@ export const estimateUtilityCost = (state: string, squareFeet?: number): number 
   }
   
   return baseCost;
+};
+
+/**
+ * Enhanced utility cost estimation using location string
+ * @param locationString - Can be ZIP code, "City, State", state code, or full address
+ * @param squareFeet - Home size in square feet (optional)
+ * @returns Monthly utility cost estimate in USD
+ */
+export const estimateUtilityCostByLocation = (locationString: string, squareFeet?: number): {
+  cost: number;
+  breakdown?: {
+    electricity: number;
+    gas: number;
+    water: number;
+    internet: number;
+    trash: number;
+  };
+  source: string;
+  location: string;
+} => {
+  console.log(`[utilitiesService] Estimating utilities for location: "${locationString}"`);
+  const result = getLocationUtilitiesCost(locationString, squareFeet);
+  console.log(`[utilitiesService] Result: $${result.monthlyCost} (${result.source})`);
+  
+  return {
+    cost: result.monthlyCost,
+    breakdown: result.breakdown,
+    source: result.source,
+    location: result.location
+  };
 };

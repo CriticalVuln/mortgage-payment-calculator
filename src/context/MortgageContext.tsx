@@ -64,15 +64,22 @@ type ActionType =
 
 // Reducer
 const mortgageReducer = (state: MortgageState, action: ActionType): MortgageState => {
-  switch (action.type) {
-    case 'UPDATE_LOCATION':
+  switch (action.type) {    case 'UPDATE_LOCATION': {
+      const updatedLocation = {
+        ...state.location,
+        ...action.payload
+      };
+      
+      // Recalculate payment when location changes since it affects utilities
+      const taxAndInsurance = calculateTaxAndInsurance(state.propertyDetails);
+      const payment = calculateMortgagePayment(state.propertyDetails, taxAndInsurance, updatedLocation);
+      
       return {
         ...state,
-        location: {
-          ...state.location,
-          ...action.payload
-        }
+        location: updatedLocation,
+        payment
       };
+    }
       
     case 'UPDATE_PROPERTY_DETAILS': {
       const updatedDetails = {
@@ -91,8 +98,7 @@ const mortgageReducer = (state: MortgageState, action: ActionType): MortgageStat
         updatedDetails.downPayment = (updatedDetails.price * updatedDetails.downPaymentPercent) / 100;
         updatedDetails.loanAmount = updatedDetails.price - updatedDetails.downPayment;
       }
-      
-      const taxAndInsurance = calculateTaxAndInsurance(updatedDetails);
+        const taxAndInsurance = calculateTaxAndInsurance(updatedDetails);
       const payment = calculateMortgagePayment(updatedDetails, taxAndInsurance, state.location);
       const amortizationSchedule = generateAmortizationSchedule(
         updatedDetails.loanAmount,
@@ -108,8 +114,7 @@ const mortgageReducer = (state: MortgageState, action: ActionType): MortgageStat
         amortizationSchedule
       };
     }
-    
-    case 'RECALCULATE_PAYMENT': {
+      case 'RECALCULATE_PAYMENT': {
       const taxAndInsurance = calculateTaxAndInsurance(state.propertyDetails);
       const payment = calculateMortgagePayment(state.propertyDetails, taxAndInsurance, state.location);
       const amortizationSchedule = generateAmortizationSchedule(

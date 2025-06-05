@@ -78,12 +78,12 @@ export const calculateHomeInsurance = (price: number): number => {
 /**
  * Calculate full mortgage payment including all components
  */
-import { estimateUtilityCost } from '../services/utilitiesService';
+import { estimateUtilityCost, estimateUtilityCostByLocation } from '../services/utilitiesService';
 
 export const calculateMortgagePayment = (
   propertyDetails: PropertyDetails,
   taxAndInsurance: TaxAndInsurance,
-  location?: { state?: string }
+  location?: { state?: string; address?: string }
 ): MortgagePayment => {
   const { loanAmount, interestRate, loanTerm, hoaFees, includeUtilities, squareFeet } = propertyDetails;
   const { propertyTax, homeInsurance, pmi } = taxAndInsurance;
@@ -91,13 +91,18 @@ export const calculateMortgagePayment = (
   const principalAndInterest = calculatePrincipalAndInterest(loanAmount, interestRate, loanTerm);
   const principal = principalAndInterest;
   const interest = interestRate > 0 ? principalAndInterest - (loanAmount / (loanTerm * 12)) : 0;
-  
-  // Get utilities cost if enabled
+    // Get utilities cost if enabled
   let utilities: number | undefined;
   if (includeUtilities) {
-    // Use location state if provided, otherwise default to Michigan
-    const state = location?.state || 'MI';
-    utilities = estimateUtilityCost(state, squareFeet);
+    // Try to use the address for more accurate utilities data
+    if (location?.address) {
+      const result = estimateUtilityCostByLocation(location.address, squareFeet);
+      utilities = result.cost;
+    } else {
+      // Fallback to state-based calculation
+      const state = location?.state || 'MI';
+      utilities = estimateUtilityCost(state, squareFeet);
+    }
   }
   
   // Calculate total with or without utilities

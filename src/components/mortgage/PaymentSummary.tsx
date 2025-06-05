@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { DollarSign, Landmark, AlertCircle, Shield, Building, CalendarClock, TrendingUp, Zap } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
@@ -6,15 +6,51 @@ import Card from '../ui/Card';
 import Toggle from '../ui/Toggle';
 import { useMortgage } from '../../context/MortgageContext';
 import { formatCurrency } from '../../utils/mortgageCalculator';
+import { estimateUtilityCostByLocation } from '../../services/utilitiesService';
+import { parseLocationAndGetUtilities } from '../../services/locationUtilitiesService';
 
 const PaymentSummary: React.FC = () => {
   const { state, updatePropertyDetails } = useMortgage();
   const { payment, propertyDetails, location } = state;
   
+  // TEST: Run a quick diagnostic on our ZIP code mapping
+  useEffect(() => {
+    console.log('[PaymentSummary] Running ZIP code mapping test...');
+    const testZips = ['48034', '90210', '10001', '33101', '84101'];
+    
+    testZips.forEach(zip => {
+      const result = parseLocationAndGetUtilities(zip);
+      console.log(`ZIP ${zip} => State: ${result.parsedLocation.state || 'NONE'}, Source: ${result.source}`);
+    });
+  }, []);
+  
+  const [utilitiesDetails, setUtilitiesDetails] = useState<{
+    breakdown?: {
+      electricity: number;
+      gas: number;
+      water: number;
+      internet: number;
+      trash: number;
+    };
+    source: string;
+    location: string;
+  } | null>(null);
+  
   // Handle utilities toggle
   const handleUtilitiesToggle = (checked: boolean) => {
     updatePropertyDetails({ includeUtilities: checked });
   };
+  // Get detailed utilities information when utilities are enabled
+  useEffect(() => {
+    if (propertyDetails.includeUtilities && location.address) {
+      console.log(`[PaymentSummary] Getting utilities for location: "${location.address}", sqft: ${propertyDetails.squareFeet}`);
+      const result = estimateUtilityCostByLocation(location.address, propertyDetails.squareFeet);
+      console.log(`[PaymentSummary] Utilities result:`, result);
+      setUtilitiesDetails(result);
+    } else {
+      setUtilitiesDetails(null);
+    }  
+  }, [propertyDetails.includeUtilities, location.address, propertyDetails.squareFeet]);
   
   // Prepare data for pie chart - include utilities if enabled
   const pieData = [
@@ -153,16 +189,55 @@ const PaymentSummary: React.FC = () => {
               onChange={handleUtilitiesToggle}
               className="scale-90"
             />
-          </div>
-          {propertyDetails.includeUtilities && payment.utilities && (
+          </div>          {propertyDetails.includeUtilities && payment.utilities && (
             <motion.div 
-              className="text-xs text-neutral-500 mt-1"
+              className="mt-2 space-y-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              Based on average utility costs in {location.state || 'your state'} for a {propertyDetails.squareFeet || 2000} sq ft home.
-              Includes electricity, water, gas, internet, and trash service.
+              <div className="text-xs text-neutral-500">
+                Based on {utilitiesDetails?.source || 'state average'} data for {utilitiesDetails?.location || location.state || 'your area'} 
+                {propertyDetails.squareFeet && ` (${propertyDetails.squareFeet.toLocaleString()} sq ft home)`}.
+              </div>
+              
+              {utilitiesDetails?.breakdown && (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mt-2">
+                  <div className="text-xs font-medium text-purple-800 mb-2">Monthly Utilities Breakdown:</div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-purple-700">Electricity:</span>
+                      <span className="font-medium text-purple-900">{formatCurrency(utilitiesDetails.breakdown.electricity)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-purple-700">Gas:</span>
+                      <span className="font-medium text-purple-900">{formatCurrency(utilitiesDetails.breakdown.gas)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-purple-700">Water:</span>
+                      <span className="font-medium text-purple-900">{formatCurrency(utilitiesDetails.breakdown.water)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-purple-700">Internet:</span>
+                      <span className="font-medium text-purple-900">{formatCurrency(utilitiesDetails.breakdown.internet)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-purple-700">Trash:</span>
+                      <span className="font-medium text-purple-900">{formatCurrency(utilitiesDetails.breakdown.trash)}</span>
+                    </div>
+                    <div className="flex justify-between border-t border-purple-300 pt-1">
+                      <span className="text-purple-800 font-medium">Total:</span>
+                      <span className="font-bold text-purple-900">{formatCurrency(payment.utilities)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {!utilitiesDetails?.breakdown && (
+                <div className="text-xs text-neutral-500 italic">
+                  Includes electricity, water, gas, internet, and trash service.
+                </div>
+              )}
             </motion.div>
           )}
         </div>
