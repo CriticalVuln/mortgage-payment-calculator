@@ -13,11 +13,8 @@ export interface PropertyDetails {
   loanAmount: number;
   creditScore: number;
   loanTerm: number;
-  interestRate: number;
-  propertyType: 'single-family' | 'condo' | 'townhouse' | 'multi-family';
+  interestRate: number;  propertyType: 'single-family' | 'condo' | 'townhouse' | 'multi-family';
   occupancy: 'primary' | 'secondary' | 'investment';
-  isVeteran: boolean;
-  isFirstTimeBuyer: boolean;
   hoaFees: number;
   moveInDate?: Date;
   customTaxRate?: number;

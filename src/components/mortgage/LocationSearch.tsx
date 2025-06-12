@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Search, Home, Settings } from 'lucide-react';
 import Card from '../ui/Card';
 import Input from '../ui/Input';
-import Slider from '../ui/Slider';
 import Button from '../ui/Button';
 import { Notification } from '../ui/Notification';
 import ApiKeyModal from '../ui/ApiKeyModal';
@@ -15,7 +14,6 @@ import { getStateFromZipCode } from '../../services/locationUtilitiesService';
 const LocationSearch: React.FC = () => {
   const { state, updateLocation, updatePropertyDetails, recalculatePayment } = useMortgage();
   const [address, setAddress] = useState(state.location.address);
-  const [radius, setRadius] = useState(state.location.radius);
   const [isLoading, setIsLoading] = useState(false);
   const [taxRate, setTaxRate] = useState<number | null>(null);
   const [lastCheckedZip, setLastCheckedZip] = useState<string | null>(null);
@@ -83,8 +81,7 @@ const LocationSearch: React.FC = () => {
         });
     }
   }, [address, lastCheckedZip, updatePropertyDetails, recalculatePayment]);
-  
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputAddress = e.target.value;
     setAddress(inputAddress);
     
@@ -92,10 +89,6 @@ const LocationSearch: React.FC = () => {
     if (addressError && inputAddress.trim().length > 0) {
       setAddressError('');
     }
-  };
-  
-  const handleRadiusChange = (value: number) => {
-    setRadius(value);
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,11 +128,10 @@ const LocationSearch: React.FC = () => {
       }
       
       console.log(`[LocationSearch] Updating location with address: "${address}", state: "${stateValue}"`);
-      
-      // Update location in state with the state information
+        // Update location in state with the state information
       updateLocation({ 
         address, 
-        radius, 
+        radius: 5, // Default radius value
         state: stateValue,
         zipCode: zipCode || undefined 
       });
@@ -221,48 +213,10 @@ const LocationSearch: React.FC = () => {
               {hasApiKey('ninjas') && (
                 <div className="text-xs text-emerald-600 flex items-center pt-1">
                   <span>✓ API key configured. Real property tax data will be used when available.</span>
-                </div>
-              )}
+                </div>              )}
             </div>
             
-            <Slider
-              label="Search Radius"
-              min={0.5}
-              max={50}
-              step={0.5}
-              value={radius}
-              onChange={handleRadiusChange}
-              valueDisplay={(value) => `${value} miles`}
-            />
-            
-            <div className="flex justify-between pt-2">
-              <Button 
-                type="button" 
-                variant="outline"
-                size="sm"
-                onClick={() => setRadius(5)}
-              >
-                5 miles
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline"
-                size="sm"
-                onClick={() => setRadius(10)}
-              >
-                10 miles
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline"
-                size="sm"
-                onClick={() => setRadius(25)}
-              >
-                25 miles
-              </Button>
-            </div>
-            
-            <Button 
+            <Button
               type="submit" 
               icon={isLoading ? 
                 <svg className="animate-spin h-4 w-4 mr-1" viewBox="0 0 24 24">

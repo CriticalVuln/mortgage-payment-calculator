@@ -4,7 +4,6 @@ import Card from '../ui/Card';
 import Input from '../ui/Input';
 import Slider from '../ui/Slider';
 import RadioGroup from '../ui/RadioGroup';
-import Toggle from '../ui/Toggle';
 import Button from '../ui/Button';
 import { useMortgage } from '../../context/MortgageContext';
 import { formatCurrency, calculatePrincipalAndInterest } from '../../utils/mortgageCalculator';
@@ -72,22 +71,77 @@ const PropertyInputs: React.FC = () => {
       // Failed to fetch current interest rates - using existing rate
     } finally {
       setIsLoadingRate(false);
-    }
-  };
+    }  };
   
-  // Enhanced input handlers with validation
+  // Formatting utilities
+  const formatNumber = (value: number): string => {
+    return value.toLocaleString('en-US');
+  };
+  const parseFormattedNumber = (value: string): number => {
+    if (value.trim() === '') return 0;
+    return parseFloat(value.replace(/,/g, '')) || 0;
+  };
+  const roundToNearestTenth = (value: number): number => {
+    return Math.round(value * 10) / 10;
+  };
+    // Local state for input display values to allow blank fields
+  const [priceDisplay, setPriceDisplay] = useState(formatNumber(propertyDetails.price));
+  const [downPaymentDisplay, setDownPaymentDisplay] = useState(formatNumber(propertyDetails.downPayment));
+  
+  // Sync display values when property details change externally
+  useEffect(() => {
+    setPriceDisplay(formatNumber(propertyDetails.price));
+    setDownPaymentDisplay(formatNumber(propertyDetails.downPayment));
+  }, [propertyDetails.price, propertyDetails.downPayment]);
+    // Enhanced input handlers with validation
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = validateLoanAmount(parseFloat(e.target.value) || 0);
+    const inputValue = e.target.value;
+    setPriceDisplay(inputValue);
+    
+    // Only update the actual value if there's a valid number
+    if (inputValue.trim() === '') {
+      // Don't update the property details when field is empty
+      return;
+    }
+    
+    const numericValue = parseFormattedNumber(inputValue);
+    const value = validateLoanAmount(numericValue);
     updatePropertyDetails({ price: value });
   };
 
+  const handlePriceBlur = () => {
+    // If field is empty on blur, restore the current value
+    if (priceDisplay.trim() === '') {
+      setPriceDisplay(formatNumber(propertyDetails.price));
+    }
+  };
+
   const handleDownPaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = validateNumericInput(parseFloat(e.target.value) || 0, 0, propertyDetails.price);
+    const inputValue = e.target.value;
+    setDownPaymentDisplay(inputValue);
+    
+    // Only update the actual value if there's a valid number
+    if (inputValue.trim() === '') {
+      // Don't update the property details when field is empty
+      return;
+    }
+    
+    const numericValue = parseFormattedNumber(inputValue);
+    const value = validateNumericInput(numericValue, 0, propertyDetails.price);
     updatePropertyDetails({ downPayment: value });
   };
 
+  const handleDownPaymentBlur = () => {
+    // If field is empty on blur, restore the current value
+    if (downPaymentDisplay.trim() === '') {
+      setDownPaymentDisplay(formatNumber(propertyDetails.downPayment));
+    }
+  };
+
   const handleDownPaymentPercentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = validateNumericInput(parseFloat(e.target.value) || 0, 0, 100);
+    const numericValue = parseFloat(e.target.value) || 0;
+    const roundedValue = roundToNearestTenth(numericValue);
+    const value = validateNumericInput(roundedValue, 0, 100);
     updatePropertyDetails({ downPaymentPercent: value });
   };
 
@@ -108,15 +162,13 @@ const PropertyInputs: React.FC = () => {
         <h2 className="text-xl font-semibold text-neutral-800">Property Details</h2>
       </div>
       
-      <div className="space-y-6">
-        <Input
+      <div className="space-y-6">        <Input
           label="Purchase Price"
-          type="number"
-          min={50000}
-          step={10000}
+          type="text"
           prefix="$"
-          value={propertyDetails.price}
+          value={priceDisplay}
           onChange={handlePriceChange}
+          onBlur={handlePriceBlur}
         />
         
         <div className="flex flex-col space-y-2">
@@ -125,24 +177,21 @@ const PropertyInputs: React.FC = () => {
               Down Payment
             </label>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="number"
-              min={0}
-              step={5000}
+            <div className="grid grid-cols-2 gap-4">            <Input
+              type="text"
               prefix="$"
-              value={propertyDetails.downPayment}
+              value={downPaymentDisplay}
               onChange={handleDownPaymentChange}
+              onBlur={handleDownPaymentBlur}
             />
             
             <Input
               type="number"
               min={0}
               max={100}
-              step={1}
+              step={0.1}
               suffix="%"
-              value={propertyDetails.downPaymentPercent}
+              value={roundToNearestTenth(propertyDetails.downPaymentPercent)}
               onChange={handleDownPaymentPercentChange}
             />
           </div>
@@ -243,22 +292,7 @@ const PropertyInputs: React.FC = () => {
                 </div>
                 <div className="text-xs text-neutral-500">per month</div>
               </div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col space-y-3 pt-2">
-            <Toggle
-              label="I am an active military member or veteran"
-              checked={propertyDetails.isVeteran}
-              onChange={(checked) => updatePropertyDetails({ isVeteran: checked })}
-            />
-            
-            <Toggle
-              label="I am a first-time home buyer"
-              checked={propertyDetails.isFirstTimeBuyer}
-              onChange={(checked) => updatePropertyDetails({ isFirstTimeBuyer: checked })}
-            />
-          </div>
+            </div>          </div>
         </div>
       </div>
     </Card>
